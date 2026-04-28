@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+litellm
+tavily-python
+trafilatura
+python-dotenv
+pydantic
+pydantic-settings
+requests
+lxml_html_clean
