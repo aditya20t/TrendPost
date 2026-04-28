@@ -70,6 +70,8 @@ async def generate_draft(request: PostRequest):
         "draft": "",
         "critique": "",
         "strategic_angle": "",
+        "search_queries": [],
+        "planner_notes": "",
         "iterations": 0,
         "max_iterations": 2, # Prevent excessive loops
         "status": "Starting agents..."

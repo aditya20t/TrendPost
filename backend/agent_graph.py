@@ -38,46 +38,106 @@ class AgentState(TypedDict):
     include_hashtags: bool
     include_cta: bool
     strategic_angle: str
+    search_queries: List[str]
+    planner_notes: str
+
+def planner_node(state: AgentState):
+    print("--- PLANNING STRATEGY & SEARCH ---")
+    prompt = f"""
+You are a high-level content strategist. The user has provided a topic: "{state['topic']}" in the field of "{state['field']}".
+Your goal is to "{state['goal']}".
+
+If the topic is generic, find a "hooky" or "niche" angle. 
+Generate 3 specific search queries (max 150 chars each) for Tavily that will uncover:
+- Recent technical shifts or news.
+- Contrarian takes or industry friction.
+- Real-world results or implementation challenges.
+
+Format:
+PLAN: <your one-sentence strategic direction>
+QUERIES:
+1. <query 1>
+2. <query 2>
+3. <query 3>
+"""
+    response = get_llm_response(
+        prompt, 
+        provider=state['provider'], 
+        model=state['model'],
+        api_key=state['api_key'],
+        base_url=state['base_url']
+    )
+    
+    plan = "Researching topic."
+    queries = [f"latest trends in {state['topic']}"]
+    try:
+        if "PLAN:" in response and "QUERIES:" in response:
+            parts = response.split("QUERIES:")
+            plan = parts[0].replace("PLAN:", "").strip()
+            queries = [q.strip().lstrip("123. - ") for q in parts[1].strip().split("\n") if q.strip()][:3]
+    except:
+        pass
+
+    return {
+        "planner_notes": plan,
+        "search_queries": queries,
+        "status": f"Strategic angle: {plan[:50]}..."
+    }
 
 def search_node(state: AgentState):
     print("--- RESEARCHING ---")
-    print(f"DEBUG: researcher_node state URL: {state.get('url')}")
-    search_topic = state['topic']
-    if state['discovery_mode'] and state['topic']:
-        search_topic = f"latest breaking news, trends and debates in {state['field']}: {state['topic']} within last 7 days"
+    all_research = []
+    all_citations = []
     
-    research, citations = gather_context(
-        topic=search_topic,
-        url=state.get('url'),
-        tavily_api_key=state['tavily_key']
-    )
+    # 1. Handle explicit URL if provided
+    if state.get('url'):
+        res, cit = gather_context(url=state['url'])
+        if res:
+            all_research.append(res)
+            all_citations.extend(cit)
+            
+    # 2. Handle targeted search queries from Planner
+    if state['discovery_mode'] and state.get('search_queries'):
+        for query in state['search_queries']:
+            print(f"DEBUG: Searching for: {query}")
+            res, cit = gather_context(topic=query, tavily_api_key=state['tavily_key'])
+            if res:
+                all_research.append(res)
+                all_citations.extend(cit)
+    elif state['discovery_mode']:
+        # Fallback if no queries generated
+        res, cit = gather_context(topic=state['topic'], tavily_api_key=state['tavily_key'])
+        if res:
+            all_research.append(res)
+            all_citations.extend(cit)
+
     return {
-        "research": research, 
-        "citations": citations,
-        "status": "Research gathered. Handing over to Strategist."
+        "research": "\n\n---\n\n".join(all_research), 
+        "citations": list(set(all_citations)),
+        "status": "Targeted research gathered."
     }
 
 def strategist_node(state: AgentState):
     print("--- STRATEGIZING ANGLE ---")
     prompt = f"""
-    You are a world-class viral content strategist. Your goal is to define the "Strategic Angle" for a LinkedIn post that will make it stand out.
-    
-    TOPIC: {state['topic']}
-    FIELD: {state['field']}
-    RESEARCH: {state['research']}
-    GOAL: {state['goal']}
-    TARGET AUDIENCE: {state['target_audience']}
-    
-    Pick ONE of these patterns or create a high-impact hybrid:
-    - THE CONTRARIAN: Challenge a common industry myth (e.g., "Why X is actually bad").
-    - NARRATIVE ASYMMETRY: Connect a weird personal observation to a major industry trend.
-    - INSIGHT COMPRESSION: Take a 50-page report and distill it into 3 brutal lessons.
-    - THE TENSION: Highlight a conflict between two valid goals (e.g., Speed vs Quality).
-    - PROVOCATIVE POSITIONING: Take a strong, opinionated stand on a recent news item.
-    
-    Return a brief "STRATEGIC BLUEPRINT" (1-2 paragraphs) that the writer must follow.
-    Include the 'Hook Strategy' and the 'Core Narrative Tension'.
-    """
+You are a world-class viral content strategist. Your goal is to define the "Strategic Angle" for a LinkedIn post that will make it stand out.
+
+TOPIC: {state['topic']}
+FIELD: {state['field']}
+RESEARCH: {state['research']}
+GOAL: {state['goal']}
+TARGET AUDIENCE: {state['target_audience']}
+
+Pick ONE of these patterns or create a high-impact hybrid:
+- THE CONTRARIAN: Challenge a common industry myth (e.g., "Why X is actually bad").
+- NARRATIVE ASYMMETRY: Connect a weird personal observation to a major industry trend.
+- INSIGHT COMPRESSION: Take a 50-page report and distill it into 3 brutal lessons.
+- THE TENSION: Highlight a conflict between two valid goals (e.g., Speed vs Quality).
+- PROVOCATIVE POSITIONING: Take a strong, opinionated stand on a recent news item.
+
+Return a brief "STRATEGIC BLUEPRINT" (1-2 paragraphs) that the writer must follow.
+Include the 'Hook Strategy' and the 'Core Narrative Tension'.
+"""
     angle = get_llm_response(
         prompt, 
         provider=state['provider'], 
@@ -439,13 +499,15 @@ def should_continue(state: AgentState) -> Literal["writer", "editor"]:
 # Build the Graph
 workflow = StateGraph(AgentState)
 
+workflow.add_node("planner", planner_node)
 workflow.add_node("search_node", search_node)
 workflow.add_node("strategist", strategist_node)
 workflow.add_node("writer", writer_node)
 workflow.add_node("reviewer", reviewer_node)
 workflow.add_node("editor", editor_node)
 
-workflow.add_edge(START, "search_node")
+workflow.add_edge(START, "planner")
+workflow.add_edge("planner", "search_node")
 workflow.add_edge("search_node", "strategist")
 workflow.add_edge("strategist", "writer")
 workflow.add_edge("writer", "reviewer")
