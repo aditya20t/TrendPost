@@ -36,10 +36,13 @@ def get_llm_response(prompt: str, provider: str = "gemini", model: Optional[str]
         os.environ["OPENAI_API_BASE"] = url
         model = model or "openai/custom-model"
     elif provider == "huggingface":
-        if model and not model.startswith("huggingface/"):
-            model = f"huggingface/{model}"
+        if model:
+            model = model.strip()
+            if not model.startswith("huggingface/"):
+                model = f"huggingface/{model}"
         model = model or "huggingface/meta-llama/Meta-Llama-3.1-8B-Instruct"
     
+    print(f"DEBUG: Calling LiteLLM with provider={provider}, model={model}")
     try:
         response = completion(
             model=model,

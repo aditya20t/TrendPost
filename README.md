@@ -18,10 +18,13 @@ TrendPost is a premium, high-fidelity AI assistant designed for creators who wan
   - **vLLM** (Connect to your own local inference server)
 
 ## 🏗 Architecture
-
-- **Backend**: FastAPI (Python) running in a optimized Docker container.
+ 
+- **Agentic Workflow**: Powered by **LangGraph**, featuring a multi-agent loop (Planner -> Search -> Strategist -> Writer -> Reviewer -> Editor).
+- **Backend**: FastAPI (Python) running in an optimized Docker container.
 - **Frontend**: Next.js 15 + Tailwind CSS v4 + Framer Motion.
 - **Base Image**: Custom `AIProjects` environment for reusable AI/NLP dependencies.
+
+![Agentic Flow Diagram](agent_flow.png)
 
 ---
 

@@ -16,6 +16,11 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
     const [apiKey, setApiKey] = useState("");
     const [tavilyKey, setTavilyKey] = useState("");
     const [baseUrl, setBaseUrl] = useState("");
+    const [targetAudience, setTargetAudience] = useState("Professionals");
+    const [goal, setGoal] = useState("thought_leadership");
+    const [maxWords, setMaxWords] = useState(300);
+    const [includeHashtags, setIncludeHashtags] = useState(true);
+    const [includeCTA, setIncludeCTA] = useState(true);
     const [discovery, setDiscovery] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -29,6 +34,11 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
             context,
             key_points: keyPoints,
             style,
+            target_audience: targetAudience,
+            goal,
+            max_words: maxWords,
+            include_hashtags: includeHashtags,
+            include_cta: includeCTA,
             model_provider: provider,
             model_name: modelName,
             api_key: apiKey,
@@ -176,6 +186,65 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                             <option>Controversial</option>
                             <option>Casual/Witty</option>
                         </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Target Audience</label>
+                        <input
+                            type="text"
+                            value={targetAudience}
+                            onChange={(e) => setTargetAudience(e.target.value)}
+                            className={`w-full text-sm font-medium ${compact ? "h-[42px]" : "h-[48px]"}`}
+                            placeholder="e.g. CTOs, Growth Hackers..."
+                        />
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Primary Goal</label>
+                        <select
+                            value={goal}
+                            onChange={(e) => setGoal(e.target.value)}
+                            className={`w-full text-sm font-medium ${compact ? "h-[42px]" : "h-[48px]"}`}
+                        >
+                            <option value="thought_leadership">Thought Leadership</option>
+                            <option value="engagement">Viral Engagement</option>
+                            <option value="authority_building">Authority Building</option>
+                            <option value="lead_generation">Lead Generation</option>
+                            <option value="education">Education/Tutorial</option>
+                            <option value="brand_awareness">Brand Awareness</option>
+                        </select>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-1">
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Max Words</label>
+                            <input
+                                type="number"
+                                value={maxWords}
+                                onChange={(e) => setMaxWords(parseInt(e.target.value))}
+                                className="w-full text-sm h-[40px]"
+                            />
+                        </div>
+                        <div className="flex flex-col justify-end gap-2 pb-1">
+                            <label className="flex items-center gap-2 cursor-pointer group">
+                                <input
+                                    type="checkbox"
+                                    checked={includeHashtags}
+                                    onChange={(e) => setIncludeHashtags(e.target.checked)}
+                                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5"
+                                />
+                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">Hashtags</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer group">
+                                <input
+                                    type="checkbox"
+                                    checked={includeCTA}
+                                    onChange={(e) => setIncludeCTA(e.target.checked)}
+                                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5"
+                                />
+                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">Include CTA</span>
+                            </label>
+                        </div>
                     </div>
 
                     <div className="space-y-1.5">

@@ -36,17 +36,15 @@ def gather_context(topic: str = None, url: str = None, tavily_api_key: str = Non
             
     if topic:
         api_key = tavily_api_key or os.getenv("TAVILY_API_KEY")
-        if not api_key:
-            return "", []
-            
-        tavily = TavilyClient(api_key=api_key)
-        try:
-            results = tavily.search(query=topic, search_depth="advanced", max_results=5)
-            search_results = results.get("results", [])
-            for res in search_results:
-                context_chunks.append(f"Title: {res['title']}\nSource: {res['url']}\nSnippet: {res['content']}")
-                citations.append(res['url'])
-        except Exception as e:
-            print(f"Search error: {e}")
+        if api_key:
+            tavily = TavilyClient(api_key=api_key)
+            try:
+                results = tavily.search(query=topic, search_depth="advanced", max_results=5)
+                search_results = results.get("results", [])
+                for res in search_results:
+                    context_chunks.append(f"Title: {res['title']}\nSource: {res['url']}\nSnippet: {res['content']}")
+                    citations.append(res['url'])
+            except Exception as e:
+                print(f"Search error: {e}")
             
     return "\n\n---\n\n".join(context_chunks), list(set(citations))
