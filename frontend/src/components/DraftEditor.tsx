@@ -11,7 +11,7 @@ export default function DraftEditor({
     onDismiss
 }: {
     draft: string;
-    initialDraft?: string;
+    initialDraft: string | null;
     iterations?: number;
     citations: string[];
     onDismiss: () => void
