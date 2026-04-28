@@ -8,3 +8,8 @@ pydantic
 pydantic-settings
 requests
 lxml_html_clean
+langgraph
+langchain-core
+langchain-openai
+langchain-google-genai
+langchain-anthropic

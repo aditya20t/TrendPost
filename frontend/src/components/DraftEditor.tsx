@@ -6,17 +6,25 @@ import { useState } from "react";
 
 export default function DraftEditor({
     draft,
+    initialDraft,
+    iterations,
     onDismiss
 }: {
     draft: string;
+    initialDraft?: string;
+    iterations?: number;
     citations: string[];
     onDismiss: () => void
 }) {
+    const [activeTab, setActiveTab] = useState<"final" | "initial">("final");
     const [copied, setCopied] = useState(false);
-    const [content, setContent] = useState(draft);
+    const [finalContent, setFinalContent] = useState(draft);
+    const [initialContent, setInitialContent] = useState(initialDraft || "");
+
+    const currentContent = activeTab === "final" ? finalContent : initialContent;
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(content);
+        navigator.clipboard.writeText(currentContent);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -29,12 +37,35 @@ export default function DraftEditor({
         >
             <div className="absolute top-0 left-0 w-1 sm:w-1.5 h-full bg-indigo-500" />
 
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                     <div className="p-2.5 bg-indigo-500/10 rounded-xl">
                         <Edit3 className="text-indigo-500 w-5 h-5" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold title-gradient">Your Draft</h3>
+                    <div className="flex flex-col">
+                        <div className="flex items-center gap-3">
+                            <h3 className="text-xl sm:text-2xl font-bold title-gradient">Workspace</h3>
+                            {iterations !== undefined && iterations > 0 && (
+                                <span className="px-2 py-0.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[9px] font-bold text-indigo-500 uppercase tracking-tighter">
+                                    {iterations} {iterations === 1 ? 'Refinement' : 'Refinements'}
+                                </span>
+                            )}
+                        </div>
+                        <div className="flex gap-4 mt-2">
+                            <button
+                                onClick={() => setActiveTab("initial")}
+                                className={`text-[10px] uppercase tracking-widest font-black transition-all ${activeTab === "initial" ? "text-indigo-500 border-b-2 border-indigo-500" : "text-slate-400 hover:text-slate-600"}`}
+                            >
+                                Initial Draft
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("final")}
+                                className={`text-[10px] uppercase tracking-widest font-black transition-all ${activeTab === "final" ? "text-indigo-500 border-b-2 border-indigo-500" : "text-slate-400 hover:text-slate-600"}`}
+                            >
+                                Final Post
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div className="flex gap-2">
                     <button
@@ -54,8 +85,11 @@ export default function DraftEditor({
             </div>
 
             <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                value={currentContent}
+                onChange={(e) => {
+                    if (activeTab === "final") setFinalContent(e.target.value);
+                    else setInitialContent(e.target.value);
+                }}
                 className="w-full bg-transparent border-none p-0 focus:ring-0 text-slate-700 dark:text-slate-200 leading-relaxed text-base sm:text-lg resize-none flex-grow min-h-[300px] sm:min-h-[450px]"
             />
 

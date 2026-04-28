@@ -9,9 +9,12 @@ import { Loader2, Wand2, Sun, Moon } from "lucide-react";
 
 export default function Home() {
   const [draft, setDraft] = useState<string | null>(null);
+  const [initialDraft, setInitialDraft] = useState<string | null>(null);
   const [citations, setCitations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [agentStatus, setAgentStatus] = useState<string | null>(null);
+  const [iterations, setIterations] = useState<number>(0);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [isDiscovery, setIsDiscovery] = useState(false);
 
@@ -23,8 +26,10 @@ export default function Home() {
   const handleGenerate = async (data: any) => {
     setLoading(true);
     setDraft(null);
+    setInitialDraft(null);
     setCitations([]);
     setStatus(data.discovery_mode ? "Hunting for latest niche trends..." : "Gathering context...");
+    setAgentStatus(null);
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -39,7 +44,10 @@ export default function Home() {
       setStatus("Crafting your post...");
       const result = await response.json();
       setDraft(result.draft);
+      setInitialDraft(result.initial_draft || null);
       setCitations(result.citations || []);
+      setAgentStatus(result.agent_status || null);
+      setIterations(result.total_iterations || 0);
     } catch (error) {
       console.error("Failed to generate draft:", error);
       alert("Failed to connect to the backend. Is it running?");
@@ -126,7 +134,12 @@ export default function Home() {
                 className="mt-6 flex items-center gap-3 px-6 py-4 glass-card border-black/5 dark:border-white/5 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)]"
               >
                 <Loader2 className="w-5 h-5 text-indigo-500 animate-spin" />
-                <span className="text-slate-600 dark:text-slate-300 font-bold text-sm">{status}</span>
+                <div className="flex flex-col">
+                  <span className="text-slate-600 dark:text-slate-300 font-bold text-sm">{status}</span>
+                  {agentStatus && (
+                    <span className="text-indigo-500/80 font-medium text-[10px] uppercase tracking-wider">{agentStatus}</span>
+                  )}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -142,10 +155,12 @@ export default function Home() {
             >
               <div className="min-h-[400px]">
                 {draft && (
-                  <DraftEditor
-                    draft={draft}
-                    citations={[]}
-                    onDismiss={() => setDraft(null)}
+                  <DraftEditor 
+                    draft={draft} 
+                    initialDraft={initialDraft}
+                    iterations={iterations}
+                    citations={citations} 
+                    onDismiss={() => setDraft(null)} 
                   />
                 )}
                 {loading && !draft && (
