@@ -27,7 +27,8 @@ export default function Home() {
     setStatus(data.discovery_mode ? "Hunting for latest niche trends..." : "Gathering context...");
 
     try {
-      const response = await fetch("http://localhost:8000/generate-draft", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${apiUrl}/generate-draft`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
