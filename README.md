@@ -2,7 +2,8 @@
 
 TrendPost is a premium, high-fidelity AI assistant designed for creators who want to transform trends into high-engagement LinkedIn content. It features a professional-grade **Workspace Layout**, real-time **Discovery Mode**, and multi-model support across all major AI providers.
 
-![TrendPost Dashboard](https://github.com/aditya20t/TrendPost/raw/main/screenshot.png) *(Placeholder for when you add a real screenshot)*
+<img width="2551" height="1214" alt="Screenshot 2026-04-28 at 20 51 42" src="https://github.com/user-attachments/assets/063419f0-f283-4fa9-947d-d27bcfd8455f" />
+
 
 ## ✨ Key Features
 
