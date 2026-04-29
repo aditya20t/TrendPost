@@ -40,6 +40,7 @@ class AgentState(TypedDict):
     strategic_angle: str
     search_queries: List[str]
     planner_notes: str
+    draft_history: List[str]
 
 def planner_node(state: AgentState):
     print("--- PLANNING STRATEGY & SEARCH ---")
@@ -322,7 +323,8 @@ Do not include:
     updates = {
         "draft": draft, 
         "iterations": state['iterations'] + 1,
-        "status": "Draft created. Sending for Review."
+        "status": "Draft created. Sending for Review.",
+        "draft_history": state.get('draft_history', []) + [draft]
     }
     
     # Store initial draft if this is the first iteration

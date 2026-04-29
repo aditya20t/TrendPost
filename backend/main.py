@@ -74,7 +74,8 @@ async def generate_draft(request: PostRequest):
         "planner_notes": "",
         "iterations": 0,
         "max_iterations": 2, # Prevent excessive loops
-        "status": "Starting agents..."
+        "status": "Starting agents...",
+        "draft_history": []
     }
     
     try:
@@ -85,9 +86,14 @@ async def generate_draft(request: PostRequest):
             "draft": final_state["draft"],
             "initial_draft": final_state.get("initial_draft", ""),
             "citations": final_state["citations"],
-            "researched_info": final_state["research"][:500] + "..." if len(final_state["research"]) > 500 else final_state["research"],
+            "researched_info": final_state["research"],
             "agent_status": final_state["status"],
-            "total_iterations": final_state.get("iterations", 0)
+            "total_iterations": final_state.get("iterations", 0),
+            "planner_notes": final_state.get("planner_notes", ""),
+            "search_queries": final_state.get("search_queries", []),
+            "strategic_angle": final_state.get("strategic_angle", ""),
+            "critique": final_state.get("critique", ""),
+            "draft_history": final_state.get("draft_history", [])
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Agent workflow failed: {str(e)}")

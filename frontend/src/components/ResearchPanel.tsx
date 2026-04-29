@@ -20,7 +20,7 @@ export default function ResearchPanel({ citations, loading }: { citations: strin
                 <h3 className="font-bold text-slate-800 dark:text-white tracking-tight text-lg">Research Sources</h3>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center p-8 text-center space-y-4">
                         <div className="relative">

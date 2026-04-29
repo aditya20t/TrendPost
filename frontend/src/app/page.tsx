@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import InputDashboard from "@/components/InputDashboard";
 import DraftEditor from "@/components/DraftEditor";
 import ResearchPanel from "@/components/ResearchPanel";
+import ThoughtProcess from "@/components/ThoughtProcess";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, Wand2, Sun, Moon } from "lucide-react";
 
@@ -17,6 +18,13 @@ export default function Home() {
   const [iterations, setIterations] = useState<number>(0);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [isDiscovery, setIsDiscovery] = useState(false);
+  
+  // Intermediate step data
+  const [plannerNotes, setPlannerNotes] = useState("");
+  const [searchQueries, setSearchQueries] = useState<string[]>([]);
+  const [strategicAngle, setStrategicAngle] = useState("");
+  const [critique, setCritique] = useState("");
+  const [draftHistory, setDraftHistory] = useState<string[]>([]);
 
   // Sync theme with body class
   useEffect(() => {
@@ -30,6 +38,11 @@ export default function Home() {
     setCitations([]);
     setStatus(data.discovery_mode ? "Hunting for latest niche trends..." : "Gathering context...");
     setAgentStatus(null);
+    setPlannerNotes("");
+    setSearchQueries([]);
+    setStrategicAngle("");
+    setCritique("");
+    setDraftHistory([]);
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -48,6 +61,11 @@ export default function Home() {
       setCitations(result.citations || []);
       setAgentStatus(result.agent_status || null);
       setIterations(result.total_iterations || 0);
+      setPlannerNotes(result.planner_notes || "");
+      setSearchQueries(result.search_queries || []);
+      setStrategicAngle(result.strategic_angle || "");
+      setCritique(result.critique || "");
+      setDraftHistory(result.draft_history || []);
     } catch (error) {
       console.error("Failed to generate draft:", error);
       alert("Failed to connect to the backend. Is it running?");
@@ -153,32 +171,43 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               className="flex-grow w-full flex flex-col gap-6 lg:gap-8 items-stretch"
             >
-              <div className="min-h-[400px]">
-                {draft && (
-                  <DraftEditor 
-                    draft={draft} 
-                    initialDraft={initialDraft}
-                    iterations={iterations}
-                    citations={citations} 
-                    onDismiss={() => setDraft(null)} 
-                  />
-                )}
-                {loading && !draft && (
-                  <div className="glass-card p-8 md:p-12 h-[500px] flex flex-col items-center justify-center text-center space-y-6 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]">
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-2xl animate-pulse" />
-                        <div className="relative p-5 bg-indigo-500/10 rounded-2xl animate-pulse">
-                          <Wand2 className="w-8 h-8 md:w-12 md:h-12 text-indigo-500" />
+              <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+                <div className="flex-grow w-full space-y-6 lg:space-y-8">
+                    {draft ? (
+                      <>
+                        <DraftEditor 
+                          draft={draft} 
+                          iterations={iterations}
+                          citations={citations} 
+                          onDismiss={() => setDraft(null)} 
+                        />
+                        <ThoughtProcess 
+                          plannerNotes={plannerNotes}
+                          searchQueries={searchQueries}
+                          strategicAngle={strategicAngle}
+                          critique={critique}
+                          draftHistory={draftHistory}
+                        />
+                      </>
+                    ) : (
+                      <div className="glass-card p-8 md:p-12 h-[500px] flex flex-col items-center justify-center text-center space-y-6 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-2xl animate-pulse" />
+                            <div className="relative p-5 bg-indigo-500/10 rounded-2xl animate-pulse">
+                              <Wand2 className="w-8 h-8 md:w-12 md:h-12 text-indigo-500" />
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                      <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-2">Drafting your post...</h3>
-                      <p className="text-slate-500 dark:text-slate-400 text-sm max-w-xs mx-auto">Our AI is synthesizing the research and crafting your authentic voice.</p>
-                    </div>
-                  </div>
-                )}
+                        <div>
+                          <h3 className="text-lg md:text-xl font-bold text-slate-800 dark:text-white mb-2">Drafting your post...</h3>
+                          <p className="text-slate-500 dark:text-slate-400 text-sm max-w-xs mx-auto">Our AI is synthesizing the research and crafting your authentic voice.</p>
+                        </div>
+                      </div>
+                    )}
+                </div>
+                <div className="w-full lg:w-[400px] shrink-0">
+                  <ResearchPanel citations={citations} loading={loading} />
+                </div>
               </div>
-              <ResearchPanel citations={citations} loading={loading} />
             </motion.div>
           )}
         </AnimatePresence>
