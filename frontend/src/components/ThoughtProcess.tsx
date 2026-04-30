@@ -48,7 +48,8 @@ export default function ThoughtProcess({
         >
             <button 
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-full flex items-center justify-between p-6 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+                className="w-full flex items-center justify-between hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
+                style={{ padding: 'clamp(1rem, 4vw, 1.5rem)' }}
             >
                 <div className="flex items-center gap-4">
                     <div className="p-2.5 bg-indigo-500/10 rounded-xl">
@@ -63,7 +64,10 @@ export default function ThoughtProcess({
             </button>
 
             {isExpanded && (
-                <div className="p-6 pt-0 space-y-8 max-h-[500px] sm:max-h-[700px] overflow-y-auto custom-scrollbar">
+                <div 
+                    className="space-y-8 max-h-[500px] sm:max-h-[700px] overflow-y-auto custom-scrollbar"
+                    style={{ padding: '0 clamp(1rem, 4vw, 1.5rem) clamp(1rem, 4vw, 1.5rem) clamp(1rem, 4vw, 1.5rem)' }}
+                >
                     {/* Planner Phase */}
                     {plannerNotes && (
                         <Step 

@@ -6,7 +6,7 @@ import DraftEditor from "@/components/DraftEditor";
 import ResearchPanel from "@/components/ResearchPanel";
 import ThoughtProcess from "@/components/ThoughtProcess";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2, Wand2, Sun, Moon } from "lucide-react";
+import { Loader2, Wand2, Sun, Moon, Coffee, Heart } from "lucide-react";
 
 export default function Home() {
   const [draft, setDraft] = useState<string | null>(null);
@@ -80,7 +80,10 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen px-4 py-8 md:px-12 md:py-24 flex flex-col items-center transition-colors duration-500">
+    <main 
+      className="min-h-screen flex flex-col items-center transition-colors duration-500"
+      style={{ padding: 'var(--fluid-py) var(--fluid-px)' }}
+    >
       <AnimatePresence>
         {isDiscovery && (
           <motion.div
@@ -92,18 +95,39 @@ export default function Home() {
           />
         )}
       </AnimatePresence>
-
-      {/* Theme Switcher */}
-      <button
-        onClick={toggleTheme}
-        className="fixed top-6 right-6 p-3 rounded-full glass-card border border-black/10 dark:border-white/10 hover:border-indigo-500/50 transition-all z-50 group"
-      >
-        {theme === "light" ? (
-          <Moon className="w-5 h-5 text-slate-700 group-hover:text-blue-600 transition-colors" />
-        ) : (
-          <Sun className="w-5 h-5 text-yellow-400 group-hover:text-white transition-colors" />
-        )}
-      </button>
+      {/* Top Navigation / Links */}
+      <div className="fixed top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 sm:gap-3 z-50">
+        <a
+          href="https://github.com/aditya20t/TrendPost"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 rounded-full glass-card border border-black/10 dark:border-white/10 hover:border-indigo-500/50 transition-all group"
+          title="GitHub Repository"
+        >
+          <svg viewBox="0 0 24 24" className="w-4 h-4 sm:w-5 sm:h-5 fill-slate-700 dark:fill-slate-300 group-hover:fill-indigo-500 transition-colors" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 group-hover:text-indigo-500 transition-colors hidden md:inline">GitHub</span>
+        </a>
+        <a
+          href="https://ko-fi.com/aditya20t"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 rounded-full glass-card border border-black/10 dark:border-white/10 hover:border-indigo-500/50 transition-all group"
+          title="Buy me a coffee"
+        >
+          <Coffee className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700 dark:text-slate-300 group-hover:text-indigo-500 transition-colors" />
+          <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-300 group-hover:text-indigo-500 transition-colors hidden md:inline">Support</span>
+        </a>
+        <button
+          onClick={toggleTheme}
+          className="p-2 sm:p-3 rounded-full glass-card border border-black/10 dark:border-white/10 hover:border-indigo-500/50 transition-all group"
+        >
+          {theme === "light" ? (
+            <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700 group-hover:text-blue-600 transition-colors" />
+          ) : (
+            <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 group-hover:text-white transition-colors" />
+          )}
+        </button>
+      </div>
 
       <AnimatePresence>
         {!draft && !loading && (
@@ -120,23 +144,24 @@ export default function Home() {
             }}
             className="text-center mb-10 md:mb-16"
           >
-            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="flex items-center justify-center gap-2 mb-4">
-              <span className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[10px] font-bold text-indigo-500 uppercase tracking-widest shadow-[0_0_15px_rgba(79,70,229,0.2)]">Alpha v3.0</span>
-            </motion.div>
-            <motion.h1 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black mb-6 title-gradient tracking-tighter px-4 leading-[1.1]">
+            <motion.h1 
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} 
+              className="font-black mb-6 title-gradient tracking-tighter px-4 leading-[1.1]"
+              style={{ fontSize: 'var(--fluid-h1)' }}
+            >
               TrendPost.
             </motion.h1>
-            <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="text-slate-500 dark:text-slate-400 text-lg md:text-2xl font-medium max-w-2xl mx-auto px-6">
+            <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} className="text-slate-500 dark:text-slate-400 text-lg md:text-2xl font-medium max-w-2xl mx-auto px-6 balance-text">
               Your niche, your voice, powered by <span className="text-indigo-500 font-bold">AI</span>.
             </motion.p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className={`w-full ${draft || loading ? "max-w-[1600px] flex flex-col xl:flex-row items-start gap-6 lg:gap-8" : "max-w-6xl"} px-4 xl:px-0 relative z-10 transition-all duration-500`}>
+      <div className={`w-full ${draft || loading ? "max-w-screen-2xl flex flex-col lg:flex-row items-start gap-6 lg:gap-8" : "max-w-6xl"} px-4 lg:px-0 relative z-10 transition-all duration-500`}>
         
         {/* Input Dashboard Column */}
-        <div className={`transition-all duration-500 ${draft || loading ? "w-full xl:w-[380px] shrink-0 xl:sticky top-6" : "w-full"}`}>
+        <div className={`transition-all duration-500 ${draft || loading ? "w-full lg:w-[380px] shrink-0 lg:sticky top-6" : "w-full"}`}>
           <InputDashboard 
             onGenerate={handleGenerate} 
             onDiscoveryChange={setIsDiscovery} 
@@ -213,8 +238,35 @@ export default function Home() {
         </AnimatePresence>
       </div>
 
-      <footer className="mt-auto pt-16 text-slate-500 dark:text-slate-600 text-[10px] md:text-xs font-bold uppercase tracking-widest text-center">
-        Built for the ambitious creator.
+      <footer className="mt-auto pt-16 flex flex-col items-center gap-6">
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <a 
+            href="https://github.com/aditya20t/TrendPost" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-black/5 dark:border-white/5 hover:border-indigo-500/50 hover:text-indigo-500 transition-all group"
+            title="GitHub"
+          >
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+            <span className="text-[10px] font-bold uppercase tracking-wider">GitHub</span>
+          </a>
+          <a 
+            href="https://ko-fi.com/aditya20t" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-black/5 dark:border-white/5 hover:border-indigo-500/50 hover:text-indigo-500 transition-all group"
+            title="Buy me a coffee"
+          >
+            <Coffee className="w-4 h-4" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">Buy me a coffee</span>
+          </a>
+        </div>
+        <p className="text-slate-500 dark:text-slate-600 text-[10px] md:text-xs font-bold uppercase tracking-widest text-center flex items-center gap-2">
+          Made with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" /> by Aditya
+        </p>
+        <p className="text-slate-500/60 dark:text-slate-600/60 text-[9px] font-bold uppercase tracking-[0.2em] text-center">
+          Built for the ambitious creator
+        </p>
       </footer>
     </main>
   );

@@ -64,7 +64,8 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`glass-card w-full transition-all duration-500 ${compact ? "p-4 sm:p-6" : "p-6 sm:p-10"}`}
+            className={`glass-card w-full transition-all duration-500`}
+            style={{ padding: compact ? 'clamp(1rem, 3vw, 1.5rem)' : 'clamp(1.5rem, 5vw, 2.5rem)' }}
         >
             <div className={`flex flex-col ${compact ? "" : "sm:flex-row"} justify-between items-start ${compact ? "" : "sm:items-center"} gap-4 mb-6 ${compact ? "pb-4" : "pb-6"} border-b border-slate-200 dark:border-white/10`}>
                 <div className="flex items-center gap-4">
@@ -122,7 +123,7 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                         </div>
                     </div>
 
-                    <div className={`grid grid-cols-1 ${compact ? "" : "sm:grid-cols-2"} gap-5`}>
+                    <div className={`grid grid-cols-1 ${compact ? "gap-4" : "sm:grid-cols-2 gap-5"}`}>
                         <div className="space-y-1.5">
                             <label className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-1">
                                 <Briefcase className="w-3.5 h-3.5" /> Broader Field
@@ -130,7 +131,7 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                             <select
                                 value={field}
                                 onChange={(e) => setField(e.target.value)}
-                                className={`w-full text-sm ${compact ? "h-[46px]" : "h-[52px]"}`}
+                                className={`w-full text-sm ${compact ? "h-[46px]" : "h-[52px]"} cursor-pointer hover:border-indigo-500/50 transition-colors`}
                             >
                                 {domains.map(d => <option key={d} value={d}>{d}</option>)}
                                 <option value="Other">Other (Specify in Topic)</option>
@@ -146,7 +147,7 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                                 value={url}
                                 onChange={(e) => setUrl(e.target.value)}
                                 placeholder="https://..."
-                                className={`w-full text-sm ${compact ? "h-[46px]" : "h-[52px]"}`}
+                                className={`w-full text-sm ${compact ? "h-[46px]" : "h-[52px]"} hover:border-indigo-500/50 transition-colors`}
                             />
                         </div>
                     </div>

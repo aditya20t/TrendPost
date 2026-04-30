@@ -11,7 +11,8 @@ export default function ResearchPanel({ citations, loading }: { citations: strin
         <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="glass-card p-6 w-full h-fit border-t-4 border-t-indigo-500 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]"
+            className="glass-card w-full h-fit border-t-4 border-t-indigo-500 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]"
+            style={{ padding: 'clamp(1.25rem, 5vw, 1.5rem)' }}
         >
             <div className="flex items-center gap-4 mb-6">
                 <div className="p-2.5 bg-indigo-500/10 rounded-xl">
@@ -20,7 +21,10 @@ export default function ResearchPanel({ citations, loading }: { citations: strin
                 <h3 className="font-bold text-slate-800 dark:text-white tracking-tight text-lg">Research Sources</h3>
             </div>
 
-            <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+            <div 
+                className="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-2"
+                style={{ padding: '0 clamp(0.5rem, 2vw, 1rem)' }}
+            >
                 {loading ? (
                     <div className="flex flex-col items-center justify-center p-8 text-center space-y-4">
                         <div className="relative">

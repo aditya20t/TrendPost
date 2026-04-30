@@ -19,6 +19,12 @@
   --input-bg: rgba(255, 255, 255, 0.9);
   --title-start: #1e1b4b;
   --title-end: #4f46e5;
+  
+  /* Fluid Typography & Spacing */
+  --fluid-px: clamp(1rem, 5vw, 3rem);
+  --fluid-py: clamp(2rem, 10vw, 6rem);
+  --fluid-h1: clamp(2.5rem, 15vw, 9rem);
+  --fluid-h2: clamp(1.5rem, 8vw, 3.5rem);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -111,7 +117,7 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
-  border-radius: 1.5rem;
+  border-radius: clamp(1.5rem, 4vw, 2.5rem);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }

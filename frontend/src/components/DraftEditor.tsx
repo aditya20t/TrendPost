@@ -32,7 +32,8 @@ export default function DraftEditor({
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card p-5 sm:p-10 w-full relative overflow-hidden flex flex-col shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]"
+            className="glass-card w-full relative overflow-hidden flex flex-col shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]"
+            style={{ padding: 'clamp(1.25rem, 6vw, 2.5rem)' }}
         >
             <div className="absolute top-0 left-0 w-1 sm:w-1.5 h-full bg-indigo-500" />
 
