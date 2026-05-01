@@ -1,8 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Copy, Check, Share2, Edit3, Trash2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+    Copy, Check, Share2, Edit3, Trash2, 
+    Type, Bold, Italic, List, Hash, 
+    MessageSquare, Link2, ExternalLink, 
+    Space, Info
+} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { transformToUnicode, FormatType, stripFormatting } from "../utils/unicodeUtils";
 
 export default function DraftEditor({
     draft,
@@ -11,19 +17,72 @@ export default function DraftEditor({
 }: {
     draft: string;
     iterations?: number;
-    citations: string[];
     onDismiss: () => void
 }) {
     const [copied, setCopied] = useState(false);
     const [content, setContent] = useState(draft);
+    const [commentDraft, setCommentDraft] = useState("");
+    const [showComment, setShowComment] = useState(false);
+    const [selection, setSelection] = useState({ start: 0, end: 0 });
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    // Update content if draft prop changes (e.g. new generation)
+    // Update content if draft prop changes
     useEffect(() => {
         setContent(draft);
     }, [draft]);
 
-    const copyToClipboard = () => {
-        navigator.clipboard.writeText(content);
+    const handleSelection = () => {
+        if (textareaRef.current) {
+            setSelection({
+                start: textareaRef.current.selectionStart,
+                end: textareaRef.current.selectionEnd
+            });
+        }
+    };
+
+    const handleFormat = (type: FormatType, subType?: string) => {
+        if (!textareaRef.current) return;
+
+        const start = textareaRef.current.selectionStart;
+        const end = textareaRef.current.selectionEnd;
+        const selectedText = content.substring(start, end);
+
+        // If no selection, apply to the whole text for certain types (like spacer)
+        if (!selectedText && type !== "spacer") return;
+
+        const targetText = selectedText || content;
+        const transformed = transformToUnicode(targetText, type, subType);
+        
+        if (!selectedText) {
+            setContent(transformed);
+        } else {
+            const newContent = content.substring(0, start) + transformed + content.substring(end);
+            setContent(newContent);
+            
+            // Re-select transformed text
+            setTimeout(() => {
+                if (textareaRef.current) {
+                    textareaRef.current.focus();
+                    textareaRef.current.setSelectionRange(start, start + transformed.length);
+                }
+            }, 0);
+        }
+    };
+
+    const extractLinksToComment = () => {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        const links = content.match(urlRegex);
+        if (links) {
+            setCommentDraft(prev => (prev ? prev + "\n" + links.join("\n") : links.join("\n")));
+            setContent(prev => prev.replace(urlRegex, ""));
+            setShowComment(true);
+        }
+    };
+
+    const copyToClipboard = (text: string, isMain: boolean = true) => {
+        // Apply invisible spacers to main content before copying
+        const finalContent = isMain ? transformToUnicode(text, "spacer") : text;
+        navigator.clipboard.writeText(finalContent);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -37,6 +96,7 @@ export default function DraftEditor({
         >
             <div className="absolute top-0 left-0 w-1 sm:w-1.5 h-full bg-indigo-500" />
 
+            {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <div className="flex items-center gap-3">
                     <div className="p-2.5 bg-indigo-500/10 rounded-xl shrink-0">
@@ -51,17 +111,17 @@ export default function DraftEditor({
                                 </span>
                             )}
                         </div>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Final Post Editor</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Premium Post Editor</p>
                     </div>
                 </div>
                 
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
-                        onClick={copyToClipboard}
-                        className="flex-grow sm:flex-grow-0 px-4 py-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-colors flex items-center justify-center gap-2 text-[11px] sm:text-xs text-slate-500 font-bold uppercase tracking-wider border border-slate-200 dark:border-white/10"
+                        onClick={() => copyToClipboard(content)}
+                        className="flex-grow sm:flex-grow-0 px-4 py-2 bg-indigo-500 text-white rounded-xl transition-all flex items-center justify-center gap-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5"
                     >
-                        {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                        {copied ? "Copied!" : "Copy"}
+                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        {copied ? "Copied Post!" : "Copy for LinkedIn"}
                     </button>
                     <button
                         onClick={onDismiss}
@@ -72,25 +132,115 @@ export default function DraftEditor({
                 </div>
             </div>
 
-            <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="w-full bg-transparent border-none p-0 focus:ring-0 text-slate-700 dark:text-slate-200 leading-relaxed text-base sm:text-lg resize-none flex-grow min-h-[300px] sm:min-h-[450px]"
-                placeholder="Final post content will appear here..."
-            />
-
-            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div className="text-[11px] text-slate-400 font-medium order-2 sm:order-1">
-                    <span className="text-indigo-500 font-bold uppercase tracking-widest mr-2">Tip:</span>
-                    Edit directly before pushing to LinkedIn.
+            {/* Formatting Toolbar */}
+            <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 mb-4 p-1 sm:p-1.5 bg-slate-100/50 dark:bg-white/5 rounded-2xl border border-slate-200 dark:border-white/10 overflow-x-auto no-scrollbar scroll-smooth">
+                <div className="flex items-center gap-1 px-1.5 sm:px-2 border-r border-slate-300 dark:border-white/10 mr-1 shrink-0">
+                    <Type className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
                 </div>
-                <button
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-indigo-500/10 border border-indigo-500/30 rounded-xl text-indigo-600 dark:text-indigo-400 hover:bg-indigo-500 hover:text-white transition-all text-xs font-black uppercase tracking-widest shadow-[0_0_15px_rgba(79,70,229,0.1)] hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] order-1 sm:order-2"
-                >
-                    <Share2 className="w-4 h-4" />
-                    Push to Linkedin
-                </button>
+                
+                <div className="flex items-center gap-1 shrink-0">
+                    <ToolbarButton icon={<Bold size={14} />} label="Strong" onClick={() => handleFormat("bold_serif")} />
+                    <ToolbarButton icon={<Italic size={14} />} label="Emphasis" onClick={() => handleFormat("italic_serif")} />
+                    <ToolbarButton icon={<span className="font-mono text-[10px] font-bold">A_</span>} label="Code" onClick={() => handleFormat("monospace")} />
+                </div>
+                
+                <div className="w-px h-4 bg-slate-300 dark:border-white/10 mx-1 shrink-0" />
+                
+                <div className="flex items-center gap-1 shrink-0">
+                    <ToolbarButton icon={<List size={14} />} label="Bullet" onClick={() => handleFormat("bullet", "arrow")} />
+                    <ToolbarButton icon={<Hash size={14} />} label="Steps" onClick={() => handleFormat("number", "circled")} />
+                </div>
+                
+                <div className="w-px h-4 bg-slate-300 dark:border-white/10 mx-1 shrink-0" />
+                
+                <div className="flex items-center gap-1 shrink-0">
+                    <ToolbarButton icon={<Link2 size={14} />} label="Clean Link" onClick={extractLinksToComment} />
+                    <ToolbarButton icon={<div className="w-3.5 h-0.5 bg-slate-400 rounded-full" />} label="Break" onClick={() => handleFormat("divider" as any)} />
+                    <ToolbarButton icon={<Space size={14} />} label="Fix Spacing" onClick={() => handleFormat("spacer")} />
+                </div>
             </div>
+
+            {/* Main Editor */}
+            <div className="relative group flex-grow flex flex-col">
+                <textarea
+                    ref={textareaRef}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    onSelect={handleSelection}
+                    className="w-full bg-transparent border-none p-0 focus:ring-0 text-slate-700 dark:text-slate-200 leading-relaxed resize-none flex-grow min-h-[300px] sm:min-h-[400px] custom-scrollbar"
+                    style={{ fontSize: 'var(--editor-font)' }}
+                    placeholder="Write your high-impact post here..."
+                />
+                
+                {/* Accessibility Badge */}
+                <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <div className="flex items-center gap-1 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded-md text-[9px] font-bold text-amber-600 uppercase tracking-tighter backdrop-blur-sm">
+                        <Info size={10} />
+                        Unicode text may affect screen readers
+                    </div>
+                </div>
+            </div>
+
+            {/* Comment Draft Section */}
+            <AnimatePresence>
+                {showComment && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="mt-6 pt-6 border-t border-slate-200 dark:border-white/10"
+                    >
+                        <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                                <MessageSquare className="w-4 h-4 text-indigo-500" />
+                                <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">First Comment Draft</span>
+                            </div>
+                            <button 
+                                onClick={() => copyToClipboard(commentDraft, false)}
+                                className="text-[10px] font-bold text-indigo-500 hover:underline flex items-center gap-1"
+                            >
+                                <Copy size={12} /> Copy Comment
+                            </button>
+                        </div>
+                        <textarea
+                            value={commentDraft}
+                            onChange={(e) => setCommentDraft(e.target.value)}
+                            className="w-full bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 p-3 rounded-xl text-slate-600 dark:text-slate-400 min-h-[80px] focus:ring-1 focus:ring-indigo-500"
+                            style={{ fontSize: 'var(--editor-font)', lineHeight: '1.5' }}
+                            placeholder="Add links or hashtags for the first comment here..."
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Footer */}
+            {!showComment && commentDraft === "" && (
+                <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div className="text-[11px] text-slate-400 font-medium order-2 sm:order-1">
+                        <span className="text-indigo-500 font-bold uppercase tracking-widest mr-2">Tip:</span>
+                        Use the toolbar to make your post stand out on LinkedIn.
+                    </div>
+                    <button
+                        onClick={() => setShowComment(true)}
+                        className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-500 transition-colors flex items-center gap-2"
+                    >
+                        <MessageSquare size={14} /> Add Comment Draft
+                    </button>
+                </div>
+            )}
         </motion.div>
+    );
+}
+
+function ToolbarButton({ icon, label, onClick }: { icon: React.ReactNode, label: string, onClick: () => void }) {
+    return (
+        <button
+            onClick={onClick}
+            className="p-1.5 sm:p-2 hover:bg-white dark:hover:bg-white/10 rounded-xl transition-all text-slate-500 hover:text-indigo-500 border border-transparent hover:border-slate-200 dark:hover:border-white/10 shadow-sm hover:shadow-md flex items-center gap-1.5 shrink-0"
+            title={label}
+        >
+            {icon}
+            <span className="text-[9px] sm:text-[10px] font-bold uppercase hidden sm:inline">{label}</span>
+        </button>
     );
 }

@@ -25,6 +25,7 @@
   --fluid-py: clamp(2rem, 10vw, 6rem);
   --fluid-h1: clamp(2.5rem, 15vw, 9rem);
   --fluid-h2: clamp(1.5rem, 8vw, 3.5rem);
+  --editor-font: clamp(1rem, 1.2vw + 0.5rem, 1.25rem);
 }
 
 @media (prefers-color-scheme: dark) {

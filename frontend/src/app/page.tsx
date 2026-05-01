@@ -158,7 +158,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      <div className={`w-full ${draft || loading ? "max-w-screen-2xl flex flex-col lg:flex-row items-start gap-6 lg:gap-8" : "max-w-6xl"} px-4 lg:px-0 relative z-10 transition-all duration-500`}>
+      <div className={`w-full ${draft || loading ? "max-w-7xl 2xl:max-w-screen-2xl flex flex-col lg:flex-row items-start gap-8 lg:gap-12" : "max-w-6xl"} px-6 sm:px-10 lg:px-12 relative z-10 transition-all duration-500`}>
         
         {/* Input Dashboard Column */}
         <div className={`transition-all duration-500 ${draft || loading ? "w-full lg:w-[380px] shrink-0 lg:sticky top-6" : "w-full"}`}>
@@ -194,25 +194,30 @@ export default function Home() {
             <motion.div 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex-grow w-full flex flex-col gap-6 lg:gap-8 items-stretch"
+              className="flex-grow w-full flex flex-col gap-8 items-stretch"
             >
-              <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-                <div className="flex-grow w-full space-y-6 lg:space-y-8">
+                <div className="flex-grow w-full space-y-8">
                     {draft ? (
                       <>
                         <DraftEditor 
                           draft={draft} 
                           iterations={iterations}
-                          citations={citations} 
                           onDismiss={() => setDraft(null)} 
                         />
-                        <ThoughtProcess 
-                          plannerNotes={plannerNotes}
-                          searchQueries={searchQueries}
-                          strategicAngle={strategicAngle}
-                          critique={critique}
-                          draftHistory={draftHistory}
-                        />
+                        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+                          <div className="xl:col-span-7">
+                            <ThoughtProcess 
+                              plannerNotes={plannerNotes}
+                              searchQueries={searchQueries}
+                              strategicAngle={strategicAngle}
+                              critique={critique}
+                              draftHistory={draftHistory}
+                            />
+                          </div>
+                          <div className="xl:col-span-5 lg:sticky top-6">
+                            <ResearchPanel citations={citations} loading={loading} />
+                          </div>
+                        </div>
                       </>
                     ) : (
                       <div className="glass-card p-8 md:p-12 h-[500px] flex flex-col items-center justify-center text-center space-y-6 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)]">
@@ -229,10 +234,6 @@ export default function Home() {
                       </div>
                     )}
                 </div>
-                <div className="w-full lg:w-[400px] shrink-0">
-                  <ResearchPanel citations={citations} loading={loading} />
-                </div>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>

@@ -102,12 +102,12 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className={`grid grid-cols-1 ${compact ? "gap-6" : "lg:grid-cols-12 gap-8 lg:gap-12"}`}>
+            <form onSubmit={handleSubmit} className={`grid grid-cols-1 ${compact ? "gap-6" : "lg:grid-cols-12 gap-6 lg:gap-10 xl:gap-16"}`}>
                 
                 {/* Left Column: Core Inputs */}
-                <div className={`${compact ? "" : "lg:col-span-7"} space-y-5`}>
+                <div className={`${compact ? "" : "lg:col-span-7"} space-y-4 sm:space-y-6`}>
                     <div className="space-y-1.5">
-                        <label className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-1">
+                        <label className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-1">
                             <Edit className="w-3.5 h-3.5" /> Topic or Trend Name
                         </label>
                         <div className="relative group">
@@ -116,22 +116,22 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                                 value={topic}
                                 onChange={(e) => setTopic(e.target.value)}
                                 placeholder={discovery ? "e.g. Transformers in AI" : "e.g. Gemini 1.5 Updates"}
-                                className={`w-full ${compact ? "text-sm h-[46px]" : "text-base sm:text-lg h-[52px]"}`}
+                                className={`w-full ${compact ? "text-sm h-[46px]" : "text-base sm:text-lg h-[50px] sm:h-[56px]"}`}
                                 required={!url}
                             />
                             {discovery && <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-500/50 animate-pulse" />}
                         </div>
                     </div>
 
-                    <div className={`grid grid-cols-1 ${compact ? "gap-4" : "sm:grid-cols-2 gap-5"}`}>
+                    <div className={`grid grid-cols-1 ${compact ? "gap-4" : "sm:grid-cols-2 gap-4 sm:gap-6"}`}>
                         <div className="space-y-1.5">
-                            <label className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-1">
+                            <label className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-1">
                                 <Briefcase className="w-3.5 h-3.5" /> Broader Field
                             </label>
                             <select
                                 value={field}
                                 onChange={(e) => setField(e.target.value)}
-                                className={`w-full text-sm ${compact ? "h-[46px]" : "h-[52px]"} cursor-pointer hover:border-indigo-500/50 transition-colors`}
+                                className={`w-full text-sm ${compact ? "h-[46px]" : "h-[50px] sm:h-[56px]"} cursor-pointer hover:border-indigo-500/50 transition-colors`}
                             >
                                 {domains.map(d => <option key={d} value={d}>{d}</option>)}
                                 <option value="Other">Other (Specify in Topic)</option>
@@ -139,7 +139,7 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-1">
+                            <label className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-1">
                                 <Globe className="w-3.5 h-3.5" /> Target URL <span className="text-[9px] text-slate-400 font-black uppercase px-1.5 py-0.5 bg-black/5 dark:bg-white/5 rounded ml-auto">Optional</span>
                             </label>
                             <input
@@ -147,14 +147,14 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                                 value={url}
                                 onChange={(e) => setUrl(e.target.value)}
                                 placeholder="https://..."
-                                className={`w-full text-sm ${compact ? "h-[46px]" : "h-[52px]"} hover:border-indigo-500/50 transition-colors`}
+                                className={`w-full text-sm ${compact ? "h-[46px]" : "h-[50px] sm:h-[56px]"} hover:border-indigo-500/50 transition-colors`}
                             />
                         </div>
                     </div>
 
                     <div className="space-y-1.5">
-                        <label className="text-[11px] sm:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex justify-between items-center mb-1">
-                            <span>Your Personal Perspective</span>
+                        <label className="text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex justify-between items-center mb-1">
+                            <span className="flex items-center gap-2">Personal Perspective</span>
                             <span className="text-[9px] text-slate-400 font-black uppercase px-1.5 py-0.5 bg-black/5 dark:bg-white/5 rounded">Optional</span>
                         </label>
                         <textarea
@@ -162,13 +162,15 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                             onChange={(e) => setContext(e.target.value)}
                             rows={compact ? 3 : (discovery ? 4 : 6)}
                             placeholder="What's your unique take on this?"
-                            className={`w-full resize-none ${compact ? "text-sm" : "text-base"}`}
+                            className={`w-full resize-none ${compact ? "text-sm" : "text-base sm:text-lg"} custom-scrollbar`}
                         />
                     </div>
                 </div>
 
                 {/* Right Column: Settings */}
-                <div className={`${compact ? "" : "lg:col-span-5"} bg-black/5 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-3xl ${compact ? "p-5" : "p-6 sm:p-8"} space-y-5`}>
+                <div className={`${compact ? "" : "lg:col-span-5"} bg-black/5 dark:bg-white/[0.02] border border-slate-200 dark:border-white/5 rounded-[2rem] space-y-4 sm:space-y-6`}
+                     style={{ padding: 'clamp(1rem, 4vw, 2rem)' }}
+                >
                     <div className="flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-white/10">
                         <Settings2 className="w-4 h-4 text-slate-500" />
                         <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">Generation Settings</h3>
@@ -216,14 +218,14 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                         </select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 pt-1">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-1">
                         <div className="space-y-1.5">
-                            <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Max Words</label>
+                            <label className="text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Max Words</label>
                             <input
                                 type="number"
                                 value={maxWords}
                                 onChange={(e) => setMaxWords(parseInt(e.target.value))}
-                                className="w-full text-sm h-[40px]"
+                                className="w-full text-xs sm:text-sm h-[40px] sm:h-[44px]"
                             />
                         </div>
                         <div className="flex flex-col justify-end gap-2 pb-1">
@@ -232,18 +234,18 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                                     type="checkbox"
                                     checked={includeHashtags}
                                     onChange={(e) => setIncludeHashtags(e.target.checked)}
-                                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5"
+                                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5 transition-all"
                                 />
-                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">Hashtags</span>
+                                <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">Hashtags</span>
                             </label>
                             <label className="flex items-center gap-2 cursor-pointer group">
                                 <input
                                     type="checkbox"
                                     checked={includeCTA}
                                     onChange={(e) => setIncludeCTA(e.target.checked)}
-                                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5"
+                                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 w-3.5 h-3.5 transition-all"
                                 />
-                                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">Include CTA</span>
+                                <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">Include CTA</span>
                             </label>
                         </div>
                     </div>

@@ -43,16 +43,17 @@ export default function ResearchPanel({ citations, loading }: { citations: strin
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className="group flex flex-col gap-1 p-4 bg-black/[0.03] dark:bg-white/[0.03] hover:bg-indigo-500/5 dark:hover:bg-indigo-500/10 rounded-2xl border border-black/5 dark:border-white/5 hover:border-indigo-500/30 transition-all font-medium shadow-sm hover:shadow-md"
+                            transition={{ delay: i * 0.1 }}
+                            className="group flex flex-col gap-1 p-3 sm:p-4 bg-black/[0.03] dark:bg-white/[0.03] hover:bg-indigo-500/5 dark:hover:bg-indigo-500/10 rounded-2xl border border-black/5 dark:border-white/5 hover:border-indigo-500/30 transition-all font-medium shadow-sm hover:shadow-md"
                         >
                             <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
+                                <span className="text-[9px] sm:text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
                                     <Globe className="w-3.5 h-3.5" />
                                     {new URL(url).hostname}
                                 </span>
-                                <ExternalLink className="w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                                <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 group-hover:text-indigo-500 transition-colors" />
                             </div>
-                            <span className="text-xs text-slate-500 dark:text-slate-400 truncate group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors mt-1">
+                            <span className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 truncate group-hover:text-slate-800 dark:group-hover:text-slate-200 transition-colors mt-1">
                                 {url}
                             </span>
                         </motion.a>
