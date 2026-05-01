@@ -2,13 +2,13 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-    Copy, Check, Share2, Edit3, Trash2, 
+    Copy, Check, Edit3, Trash2, 
     Type, Bold, Italic, List, Hash, 
-    MessageSquare, Link2, ExternalLink, 
+    MessageSquare, Link2, 
     Space, Info
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import { transformToUnicode, FormatType, stripFormatting } from "../utils/unicodeUtils";
+import { useState, useRef } from "react";
+import { transformToUnicode, FormatType } from "../utils/unicodeUtils";
 
 export default function DraftEditor({
     draft,
@@ -23,21 +23,12 @@ export default function DraftEditor({
     const [content, setContent] = useState(draft);
     const [commentDraft, setCommentDraft] = useState("");
     const [showComment, setShowComment] = useState(false);
-    const [selection, setSelection] = useState({ start: 0, end: 0 });
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    // Update content if draft prop changes
-    useEffect(() => {
-        setContent(draft);
-    }, [draft]);
+
 
     const handleSelection = () => {
-        if (textareaRef.current) {
-            setSelection({
-                start: textareaRef.current.selectionStart,
-                end: textareaRef.current.selectionEnd
-            });
-        }
+        // Selection tracking if needed later
     };
 
     const handleFormat = (type: FormatType, subType?: string) => {
@@ -155,7 +146,7 @@ export default function DraftEditor({
                 
                 <div className="flex items-center gap-1 shrink-0">
                     <ToolbarButton icon={<Link2 size={14} />} label="Clean Link" onClick={extractLinksToComment} />
-                    <ToolbarButton icon={<div className="w-3.5 h-0.5 bg-slate-400 rounded-full" />} label="Break" onClick={() => handleFormat("divider" as any)} />
+                    <ToolbarButton icon={<div className="w-3.5 h-0.5 bg-slate-400 rounded-full" />} label="Break" onClick={() => handleFormat("divider")} />
                     <ToolbarButton icon={<Space size={14} />} label="Fix Spacing" onClick={() => handleFormat("spacer")} />
                 </div>
             </div>

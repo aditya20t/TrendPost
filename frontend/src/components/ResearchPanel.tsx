@@ -43,7 +43,6 @@ export default function ResearchPanel({ citations, loading }: { citations: strin
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            transition={{ delay: i * 0.1 }}
                             className="group flex flex-col gap-1 p-3 sm:p-4 bg-black/[0.03] dark:bg-white/[0.03] hover:bg-indigo-500/5 dark:hover:bg-indigo-500/10 rounded-2xl border border-black/5 dark:border-white/5 hover:border-indigo-500/30 transition-all font-medium shadow-sm hover:shadow-md"
                         >
                             <div className="flex items-center justify-between">

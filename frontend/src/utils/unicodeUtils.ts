@@ -48,7 +48,7 @@ const NUMBERS = {
   filled: ["❶", "❷", "❸", "❹", "❺", "❻", "❼", "❽", "❾", "❿"],
 };
 
-export type FormatType = keyof typeof MAPS | "bullet" | "number" | "spacer";
+export type FormatType = keyof typeof MAPS | "bullet" | "number" | "spacer" | "divider";
 
 /**
  * Transforms a string into its Unicode counterpart
@@ -59,7 +59,7 @@ export function transformToUnicode(text: string, type: FormatType, subType?: str
     return text.split("\n").map(line => line.trim() === "" ? "\u2800" : line).join("\n");
   }
 
-  if (type === "divider" as any) {
+  if (type === "divider") {
     return text + (text ? "\n" : "") + DIVIDER + "\n";
   }
 
@@ -77,7 +77,7 @@ export function transformToUnicode(text: string, type: FormatType, subType?: str
     }).join("\n");
   }
 
-  const map = MAPS[type as keyof typeof MAPS];
+  const map = MAPS[type as keyof typeof MAPS] as { upper: number, lower: number, digits?: number } | undefined;
   if (!map) return text;
 
   return text.split("").map(char => {
@@ -93,8 +93,8 @@ export function transformToUnicode(text: string, type: FormatType, subType?: str
       return String.fromCodePoint(map.lower + (code - 97));
     }
     // Digits 0-9
-    if (code >= 48 && code <= 57 && "digits" in map) {
-      return String.fromCodePoint((map as any).digits + (code - 48));
+    if (code >= 48 && code <= 57 && map.digits !== undefined) {
+      return String.fromCodePoint(map.digits + (code - 48));
     }
     
     return char;

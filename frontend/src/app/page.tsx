@@ -10,7 +10,7 @@ import { Loader2, Wand2, Sun, Moon, Coffee, Heart } from "lucide-react";
 
 export default function Home() {
   const [draft, setDraft] = useState<string | null>(null);
-  const [initialDraft, setInitialDraft] = useState<string | null>(null);
+  const [, setInitialDraft] = useState<string | null>(null);
   const [citations, setCitations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export default function Home() {
     document.documentElement.className = theme;
   }, [theme]);
 
-  const handleGenerate = async (data: any) => {
+  const handleGenerate = async (data: Record<string, unknown>) => {
     setLoading(true);
     setDraft(null);
     setInitialDraft(null);
@@ -200,6 +200,7 @@ export default function Home() {
                     {draft ? (
                       <>
                         <DraftEditor 
+                          key={`draft-${iterations}`}
                           draft={draft} 
                           iterations={iterations}
                           onDismiss={() => setDraft(null)} 

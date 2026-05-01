@@ -4,12 +4,12 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Wand2, Globe, Key, Search, ToggleLeft, ToggleRight, Info, Zap, Brain, Briefcase, Settings2, Edit } from "lucide-react";
 
-export default function InputDashboard({ onGenerate, onDiscoveryChange, compact = false }: { onGenerate: (data: any) => void, onDiscoveryChange?: (isDiscovery: boolean) => void, compact?: boolean }) {
+export default function InputDashboard({ onGenerate, onDiscoveryChange, compact = false }: { onGenerate: (data: Record<string, unknown>) => void, onDiscoveryChange?: (isDiscovery: boolean) => void, compact?: boolean }) {
     const [topic, setTopic] = useState("");
     const [field, setField] = useState("Technology");
     const [url, setUrl] = useState("");
     const [context, setContext] = useState("");
-    const [keyPoints, setKeyPoints] = useState("");
+    const [keyPoints] = useState("");
     const [style, setStyle] = useState("Professional");
     const [provider, setProvider] = useState("gemini");
     const [modelName, setModelName] = useState("");
@@ -74,7 +74,7 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                     </div>
                     <div>
                         <h2 className={`${compact ? "text-xl" : "text-2xl sm:text-3xl"} font-bold title-gradient mb-1`}>Draft Your Next Hit</h2>
-                        {!compact && <p className="text-slate-500 dark:text-slate-400 text-sm">Tell the agent what's on your mind.</p>}
+                        {!compact && <p className="text-slate-500 dark:text-slate-400 text-sm">Tell the agent what&apos;s on your mind.</p>}
                     </div>
                 </div>
 
@@ -161,7 +161,7 @@ export default function InputDashboard({ onGenerate, onDiscoveryChange, compact 
                             value={context}
                             onChange={(e) => setContext(e.target.value)}
                             rows={compact ? 3 : (discovery ? 4 : 6)}
-                            placeholder="What's your unique take on this?"
+                            placeholder="What&apos;s your unique take on this?"
                             className={`w-full resize-none ${compact ? "text-sm" : "text-base sm:text-lg"} custom-scrollbar`}
                         />
                     </div>
