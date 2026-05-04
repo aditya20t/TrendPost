@@ -29,6 +29,10 @@ const MAPS = {
   script: {
     upper: 0x1D49C, // 𝒜
     lower: 0x1D4B6, // 𝒶
+  },
+  italic_sans: {
+    upper: 0x1D622, // 𝘈
+    lower: 0x1D63C, // 𝘢
   }
 };
 
@@ -85,13 +89,48 @@ export function transformToUnicode(text: string, type: FormatType, subType?: str
     
     // Uppercase A-Z
     if (code >= 65 && code <= 90) {
-      return String.fromCodePoint(map.upper + (code - 65));
+      const offset = code - 65;
+      
+      // Script exceptions
+      if (type === "script") {
+        const scriptUpperExceptions: Record<number, string> = {
+          66: "\u212C", // B
+          69: "\u2130", // E
+          70: "\u2131", // F
+          72: "\u210B", // H
+          73: "\u2110", // I
+          76: "\u2112", // L
+          77: "\u2133", // M
+          82: "\u211B", // R
+        };
+        if (scriptUpperExceptions[code]) return scriptUpperExceptions[code];
+      }
+      
+      return String.fromCodePoint(map.upper + offset);
     }
+
     // Lowercase a-z
     if (code >= 97 && code <= 122) {
-      // Script and Italic maps have some gaps/weirdness in Unicode, but most work linearly
-      return String.fromCodePoint(map.lower + (code - 97));
+      const offset = code - 97;
+
+      // Italic Serif exceptions
+      if (type === "italic_serif" && code === 104) {
+        return "\u210E"; // h
+      }
+
+      // Script exceptions
+      if (type === "script") {
+        const scriptLowerExceptions: Record<number, string> = {
+          101: "\u212F", // e
+          103: "\u210A", // g
+          111: "\u2134", // o
+        };
+        if (scriptLowerExceptions[code]) return scriptLowerExceptions[code];
+      }
+
+      return String.fromCodePoint(map.lower + offset);
     }
+
     // Digits 0-9
     if (code >= 48 && code <= 57 && map.digits !== undefined) {
       return String.fromCodePoint(map.digits + (code - 48));
@@ -102,11 +141,36 @@ export function transformToUnicode(text: string, type: FormatType, subType?: str
 }
 
 /**
+ * Applies smart formatting for LinkedIn
+ */
+export function smartFormat(text: string): string {
+  if (!text) return text;
+  
+  const lines = text.split("\n");
+  
+  // 1. Bold the first non-empty line (the hook)
+  let foundHook = false;
+  const formattedLines = lines.map(line => {
+    if (!foundHook && line.trim()) {
+      foundHook = true;
+      return transformToUnicode(line, "bold_serif");
+    }
+    
+    // 2. Add spacers to empty lines
+    if (line.trim() === "") {
+      return "\u2800";
+    }
+    
+    return line;
+  });
+
+  return formattedLines.join("\n");
+}
+
+/**
  * Strips formatting and invisible characters
  */
 export function stripFormatting(text: string): string {
-  // This is a simplified version; full un-mapping is complex
-  // For now, we mainly remove the spacers
   return text.replace(/\u2800/g, "");
 }
 
